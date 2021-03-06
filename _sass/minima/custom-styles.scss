@@ -8,4 +8,17 @@
 /*----- ADD YOUR STYLES BELOW -------*/
 
 // If you want to turn off dark background for syntax highlighting, comment or delete the below line.
-@import "minima/fastpages-dracula-highlight"; 
+// @import "minima/fastpages-dracula-highlight"; 
+
+// code out put 
+// .post-content p, .post-content li {
+//    // font-size: 90%;
+//    color: #515151;
+// }
+.post-content pre, .post-content code {
+	background-color: #ffe1e31f;
+}
+.post-content code {
+	padding: 0px 1px;
+}
+

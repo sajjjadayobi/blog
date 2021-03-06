@@ -1,19 +1,21 @@
 // Override Syntax Highlighting In Minima With the Dracula Theme: https://draculatheme.com/
 // If you wish to override any of this CSS, do so in _sass/minima/custom-styles.css
  
-$dt-gray-dark: #282a36;  // Background
-$dt-code-cell-background: #323443;
-$dt-gray: #44475a;       // Current Line & Selection
-$dt-gray-light: #f8f8f2; // Foreground
-$dt-blue: #6272a4;       // Comment
-$dt-cyan: #8be9fd;
-$dt-green: #50fa7b;
-$dt-orange: #ffb86c;
-$dt-pink: #ff79c6;
-$dt-purple: #bd93f9;
-$dt-red: #ff5555;
-$dt-yellow: #f1fa8c;
-$dt-green-light: rgb(172, 229, 145);
+
+
+$dt-gray-dark: #2b343d;  // Background
+$dt-code-cell-background: #2b343d;
+$dt-gray: #2b343d;       // Current Line & Selection
+$dt-gray-light: #ebebe8; // Foreground
+$dt-green: #e87b07; // def NAME
+$dt-pink: #4eacf5; // def-class
+$dt-green-light: #e87b07;
+
+$dt-blue: #02e825;
+$dt-cyan: #b6bab7;
+$dt-purple: #c4b400;
+$dt-red: #fa0505;
+$dt-yellow: #c4b400;
 
 .language-python + .language-plaintext {
     border-left: 1px solid grey;
@@ -37,10 +39,10 @@ $dt-green-light: rgb(172, 229, 145);
     margin-top:1.5rem !important;
     padding-bottom:0 !important;
     padding-top:0 !important;
-    background: #323443 !important;
+    background: $dt-gray-dark !important;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-family: Menlo, Monaco, Consolas, "Lucida Console", Roboto, Ubuntu, monospace;
+    font-family: "Code New Roman", Monaco, Consolas, "Lucida Console", Roboto, Ubuntu, monospace;
     border-radius: 5px;
     font-size: 105%;
 }
@@ -61,15 +63,6 @@ $dt-green-light: rgb(172, 229, 145);
 
 .code_cell table { width: auto; }
 
-/* Dracula Theme v1.2.5
- *
- * https://github.com/zenorocha/dracula-theme
- *
- * Copyright 2016, All rights reserved
- *
- * Code licensed under the MIT license
- *
- */
 
 .highlight {
     background: $dt-code-cell-background !important;
@@ -95,7 +88,7 @@ $dt-green-light: rgb(172, 229, 145);
     .sr,
     .s1,
     .ss {
-         color:rgb(231, 153, 122);
+         color: #09b02a; // strings
     }
   
     .go {
@@ -132,7 +125,7 @@ $dt-green-light: rgb(172, 229, 145);
  
     .p {
          font-weight: bold;
-         color: rgb(102, 217, 239);
+         color: #ffffff;
  }
   
     .ge {
