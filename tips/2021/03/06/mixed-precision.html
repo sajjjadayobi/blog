@@ -149,7 +149,7 @@ window.onload = wrap_img;
 <h2 id="How-Mixed-Precision-works">
 <a class="anchor" href="#How-Mixed-Precision-works" aria-hidden="true"><span class="octicon octicon-link"></span></a>How Mixed Precision works<a class="anchor-link" href="#How-Mixed-Precision-works"> </a>
 </h2>
-<p><img src="https://uupload.ir/files/hrph_fp16.png" alt=""></p>
+<p><img src="https://uupload.ir/files/jpnd_fp16.png" alt=""></p>
 <blockquote>
 <p>the original image is from NVIDIA Developer <a href="https://youtu.be/i1fIBtdhjIg">video</a></p>
 </blockquote>
@@ -1124,7 +1124,7 @@ Epoch 2/2
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>Matmul dimensions are not Tensor Core-friendly. Make sure matmuls’ participating sizes are multiples of <code>8</code>. (For NLP models with encoders/decoders, this can be subtle. Also, convolutions used to have similar size constraints for Tensor Core use, but for CuDNN versions 7.3 and later, no such constraints exist</li>
+<li>Matmul dimensions are not Tensor Core-friendly. Make sure matmuls’ participating sizes are multiples of <code>8</code>. (For NLP models with encoders/decoders, this can be subtle. Also, convolutions used to have similar size constraints for Tensor Core use, but for CuDNN versions 7.3 and later, no such constraints exist </li>
 </ul>
 
 </div>
@@ -1134,13 +1134,13 @@ Epoch 2/2
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>I think that now we need to define models like this:<div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">4</span>
+<li>I think that now we need to define models like this:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">4</span>
 <span class="n">layer_input</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">20</span>
 <span class="n">layer_output</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">40</span>
 <span class="n">channel_number</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="mi">64</span>
 </pre></div>
-</li>
-</ul>
 
 </div>
 </div>
