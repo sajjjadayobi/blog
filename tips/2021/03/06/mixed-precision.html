@@ -118,7 +118,7 @@ window.onload = wrap_img;
 <li class="toc-entry toc-h2"><a href="#PyTorch">PyTorch </a></li>
 <li class="toc-entry toc-h2"><a href="#Keras-&-TF-2.X">Keras &amp; TF 2.X </a>
 <ul>
-<li class="toc-entry toc-h4"><a href="#custom-training-loop-float16">Custom Training Loop (float16)</a></li>
+<li class="toc-entry toc-h3"><a href="#Custom-Training-Loop">Custom Training Loop </a></li>
 </ul>
 </li>
 <li class="toc-entry toc-h2"><a href="#Performance">Performance </a></li>
@@ -264,7 +264,7 @@ window.onload = wrap_img;
 <p>Choosing a loss scale can be tricky. If the loss scale is too low, gradients may still underflow to zero. If too high, the opposite the problem occurs: the gradients may overflow to infinity.</p>
 <ul>
 <li>
-<strong>don't wory about it</strong> framworks like PyTorch &amp; TF set it dynamicly for you</li>
+<strong>don't worry about it</strong> frameworks as PyTorch and TF set it dynamically for you</li>
 </ul>
 
 </div>
@@ -284,7 +284,7 @@ window.onload = wrap_img;
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For the PyTorch 1.6 release, developers at NVIDIA and Facebook moved mixed precision functionality into PyTorch core as the AMP package, <code>torch.cuda.amp</code></p>
 <ul>
-<li>amp stands for auto mixed persicion</li>
+<li>amp stands for auto mixed-precision</li>
 </ul>
 
 </div>
@@ -362,7 +362,7 @@ window.onload = wrap_img;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">torch.cuda.amp</span> <span class="kn">import</span> <span class="n">GradScaler</span> <span class="c1"># for gradient and loss sclaing</span>
-<span class="kn">from</span> <span class="nn">torch.cuda.amp</span> <span class="kn">import</span> <span class="n">autocast</span> <span class="c1"># Casts operations in float16 &amp; 32 automaticly </span>
+<span class="kn">from</span> <span class="nn">torch.cuda.amp</span> <span class="kn">import</span> <span class="n">autocast</span> <span class="c1"># Casts operations in float16 &amp; 32 automatically </span>
 </pre></div>
 
     </div>
@@ -425,7 +425,7 @@ window.onload = wrap_img;
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">fp16</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="c1"># defince scaler for loss and grad scaleing</span>
+<span class="c1"># defince scaler for loss and grad scaling</span>
 <span class="c1"># Creates once at the beginning of training</span>
 <span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">fp16</span><span class="p">)</span>
 
@@ -797,10 +797,10 @@ Variable dtype:  float32
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
-<li>if you have not acsses to your last layer (like in applications), use this<div class="highlight"><pre><span></span><span class="n">outputs</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="s1">'linear'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'float32'</span><span class="p">)(</span><span class="n">outputs</span><span class="p">)</span>
-</pre></div>
-</li>
+<li>if you have not acsses to your last layer (like in applications), use this</li>
 </ul>
+<div class="highlight"><pre><span></span><span class="n">outputs</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Activation</span><span class="p">(</span><span class="s1">'linear'</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'float32'</span><span class="p">)(</span><span class="n">outputs</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
@@ -936,8 +936,9 @@ Epoch 2/2
 <div class="cell border-box-sizing text_cell rendered">
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4>
-<a class="anchor" href="#custom-training-loop-float16" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Training Loop (float16)</h4>
+<h3 id="Custom-Training-Loop">
+<a class="anchor" href="#Custom-Training-Loop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Training Loop<a class="anchor-link" href="#Custom-Training-Loop"> </a>
+</h3>
 </div>
 </div>
 </div>
@@ -993,7 +994,7 @@ Epoch 2/2
         <span class="c1"># unscaled gradients to default value for stable training</span>
         <span class="n">grads</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">get_unscaled_gradients</span><span class="p">(</span><span class="n">scaled_gradients</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">apply_gradients</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainable_variables</span><span class="p">))</span>
-        <span class="c1"># as usally</span>
+        <span class="c1"># as usual</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">compiled_metrics</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">}</span>
 
