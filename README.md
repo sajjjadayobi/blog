@@ -9,3 +9,4 @@ _powered by [fastpages](https://github.com/fastai/fastpages)_
 - add drive to blog
 - add facelib to blog
 - add OnlineLR
+- Gradient Checkpointing
