@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>A little Framework on Top of PyTorch | Sajjad Ayoubi’s Blog 😉</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="A little Framework on Top of PyTorch" />
+<meta name="author" content="Sajjad Ayoubi" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="for learning how Keras, Lightning &amp; Fastai work" />
+<meta property="og:description" content="for learning how Keras, Lightning &amp; Fastai work" />
+<link rel="canonical" href="https://sajjjadayobi.github.io/blog/implementation/2021/04/20/narm.html" />
+<meta property="og:url" content="https://sajjjadayobi.github.io/blog/implementation/2021/04/20/narm.html" />
+<meta property="og:site_name" content="Sajjad Ayoubi’s Blog 😉" />
+<meta property="og:image" content="https://sajjjadayobi.github.io/blog/images/narm.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-04-20T00:00:00-05:00" />
+<script type="application/ld+json">
+{"url":"https://sajjjadayobi.github.io/blog/implementation/2021/04/20/narm.html","@type":"BlogPosting","headline":"A little Framework on Top of PyTorch","dateModified":"2021-04-20T00:00:00-05:00","datePublished":"2021-04-20T00:00:00-05:00","image":"https://sajjjadayobi.github.io/blog/images/narm.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://sajjjadayobi.github.io/blog/implementation/2021/04/20/narm.html"},"author":{"@type":"Person","name":"Sajjad Ayoubi"},"description":"for learning how Keras, Lightning &amp; Fastai work","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/blog/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://sajjjadayobi.github.io/blog/feed.xml" title="Sajjad Ayoubi's Blog 😉" /><link rel="shortcut icon" type="image/x-icon" href="/blog/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/blog/">Sajjad Ayoubi&#39;s Blog 😉</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/blog/about/">About Me</a><a class="page-link" href="/blog/search/">Search</a><a class="page-link" href="/blog/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">A little Framework on Top of PyTorch</h1><p class="page-description">for learning how Keras, Lightning &amp; Fastai work</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2021-04-20T00:00:00-05:00" itemprop="datePublished">
+        Apr 20, 2021
+      </time>• 
+          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+            <span class="p-author h-card" itemprop="name">Sajjad Ayoubi</span></span>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/blog/categories/#implementation">implementation</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-wrap flex-justify-end">
+          
+          
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/sajjjadayobi/blog/blob/master/_notebooks/2021-4-21-narm.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/blog/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul class="section-nav">
+<li class="toc-entry toc-h2"><a href="#inspiration">inspiration </a></li>
+<li class="toc-entry toc-h2"><a href="#Impelementation">Impelementation </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Trainer">Trainer </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#CallBacks">CallBacks </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Test:-MNIST-Classification">Test: MNIST Classification </a></li>
+</ul>
+</li>
+<li class="toc-entry toc-h2"><a href="#All-in-one:-Trainer-Class">All in one: Trainer Class </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2021-4-21-narm.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="inspiration">
+<a class="anchor" href="#inspiration" aria-hidden="true"><span class="octicon octicon-link"></span></a>inspiration<a class="anchor-link" href="#inspiration"> </a>
+</h2>
+<ul>
+<li>one month ago I was thinking about frameworks like Keras, Lightning &amp; Fastai<ul>
+<li>these are on top of main frameworks like Tensorflow &amp; PyTorch</li>
+</ul>
+</li>
+<li>I found that the implementation is best for finding out <code>How</code>
+</li>
+<li>this was my inspiration<ul>
+<li>I looked to lighting and Keras </li>
+<li>and try to choose the best part from those</li>
+</ul>
+</li>
+<li>the implementation is on <code>PyTorch</code>
+</li>
+<li>you can look at this and write your one little FrameWork</li>
+<li>
+<p>I can't and don't want to create something like Keras from scratch</p>
+<ul>
+<li>the main thing in these frameworks are <strong>Training Loop</strong> and <strong>Callbacks</strong>
+</li>
+<li>we go through to implement these</li>
+</ul>
+</li>
+<li>
+<p>it was a little challenge for my weekend</p>
+<ul>
+<li>I learned much from this project</li>
+<li>and now I know that what Keras and Lightning does</li>
+<li>the best thing that I learned was<ul>
+<li>the source code is the King !!!</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Impelementation">
+<a class="anchor" href="#Impelementation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Impelementation<a class="anchor-link" href="#Impelementation"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>first of all, we need to add some basic stuff</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">gc</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+<span class="kn">from</span> <span class="nn">torch.nn.utils</span> <span class="kn">import</span> <span class="n">clip_grad_norm_</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.cuda.amp</span> <span class="kn">import</span> <span class="n">autocast</span><span class="p">,</span> <span class="n">GradScaler</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Trainer">
+<a class="anchor" href="#Trainer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Trainer<a class="anchor-link" href="#Trainer"> </a>
+</h3>
+<p>the most important thing is Training Loop</p>
+<p>Model.fit in Keras, trainer in lighting</p>
+<ul>
+<li>I wanna create a Trainer class that gives some stuff like:<ul>
+<li>Model, training dataset, optimizer, and loss function</li>
+<li>and does fit functionality like Sklearn and Keras</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the <code>__init__</code> function is huge</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Trainer</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="p">,</span> <span class="n">valid_ds</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> 
+                 <span class="n">train_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">valid_bs</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_type</span><span class="o">=</span><span class="s1">'epoch'</span><span class="p">,</span> 
+                 <span class="n">metrcis</span><span class="o">=</span><span class="p">[],</span> <span class="n">workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fp16</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grad_clip_value</span><span class="o">=</span><span class="s1">'inf'</span><span class="p">):</span>
+        
+        <span class="sd">"""</span>
+<span class="sd">        Args:</span>
+<span class="sd">          model: your model that you want to train (nn.Moudle)</span>
+<span class="sd">          train_ds: any DataStructer that works with torch.Dataloder (DataSet, list, ...)</span>
+<span class="sd">          optimizer: nn.optim</span>
+<span class="sd">          loss: nn.losses or any function</span>
+<span class="sd">          train_bs: training batch size (int)</span>
+<span class="sd">          valid_bs: validation batch size (int)</span>
+<span class="sd">          scheduler: torch.optim.lr_scheduler</span>
+<span class="sd">          metrics: a list of function for custom matrix (list)</span>
+<span class="sd">          scheduler_type: scheduler stratigy ('epoch', 'batch')</span>
+<span class="sd">          grad_clip_value: value for gradient cilipping (int or 'inf')</span>
+<span class="sd">          workers: num workers in dataloders (int)</span>
+<span class="sd">          fp16: automatic mixed percision training (bool)</span>
+<span class="sd">        </span>
+<span class="sd">        Params:</span>
+<span class="sd">          params: a dict for saving details like (loss, step number, epoch number, ...)</span>
+<span class="sd">          stop_training: a bool for stopping training proccess </span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">=</span> <span class="n">scheduler_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span> <span class="o">=</span> <span class="n">metrcis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span> <span class="o">=</span> <span class="n">grad_clip_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp16</span> <span class="o">=</span> <span class="n">fp16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">fp16</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="n">workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span> <span class="o">=</span> <span class="n">train_bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span> <span class="o">=</span> <span class="n">valid_bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span> <span class="o">=</span> <span class="n">train_ds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_ds</span> <span class="o">=</span> <span class="n">valid_ds</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_train_dataloder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'train_steps'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span><span class="p">)}</span>
+        <span class="k">if</span> <span class="n">valid_ds</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_valid_dataloder</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'valid_steps'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>the first functionality of Trainer is to Create DataLoader from datasets</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">get_train_dataloder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># create a DataLoder for train </span>
+        <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">)</span>      
+      
+    <span class="k">def</span> <span class="nf">get_valid_dataloder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="c1"># create a DataLoder for valid</span>
+        <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>the advantage of this implementation is you can override these functions</li>
+<li>see the following example</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">CustomTrainer</span><span class="p">(</span><span class="n">Trainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_train_dataloder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="c1"># I override this and change the shuffle to False</span>
+      <span class="k">return</span> <span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">)</span>   
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>
+<code>fit</code> function</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">"""</span>
+<span class="sd">        it trains your nn for any epochs that you want</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            epochs: number of epochs for training (int)</span>
+<span class="sd">            device: running device (torch.device)</span>
+<span class="sd">            callbacks: list of callbacks that you want (list)</span>
+<span class="sd">        """</span>
+        <span class="c1"># set params</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epochs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">change_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">CallbackRunner</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">trainer</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_start</span>
+        <span class="c1"># start train and valid epoch</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epoch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_epoch_start</span>
+            <span class="c1"># train</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_epoch_start</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_epoch</span><span class="p">()</span> <span class="c1"># train_for_one_epoch_on_train_dl</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_epoch_end</span>
+            <span class="c1"># schedule the learning rate</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'epoch'</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="c1"># valid</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_epoch_start</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">valid_epoch</span><span class="p">()</span> <span class="c1"># train_for_one_epoch_on_valid_dl</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_epoch_end</span>    
+              
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_epoch_end</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+                <span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>one of the utils is<ul>
+<li>
+<code>change_device</code> function for simply changing device at the start of training</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">change_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">):</span>
+        <span class="sd">""" change device of (model, loss, optimizer)</span>
+<span class="sd">        Args:</span>
+<span class="sd">            device: running device (torch.device)</span>
+<span class="sd">        """</span>
+        <span class="c1"># save device to self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>now we need a <code>train_epoch</code> function<ul>
+<li>train model with train dataloder for one epoch</li>
+<li>we save all things with <code>self.prarms</code>
+</li>
+</ul>
+</li>
+<li>
+<p>Keras and Lightning also can train on TPUs and has distrubuted training</p>
+<ul>
+<li>plus some other features</li>
+</ul>
+</li>
+<li>
+<p>now we need a train_epoch function</p>
+<ul>
+<li>train model with train Dataloader for one epoch</li>
+<li>we save all things with self.prarms</li>
+</ul>
+</li>
+<li>Keras and Lightning also can train on TPUs and has distributed training<ul>
+<li>plus some other features</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">train_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        train the model for one epoch, it has:</span>
+<span class="sd">          callbacks state changer</span>
+<span class="sd">          device change for batch</span>
+<span class="sd">          autocast for mixed percision</span>
+<span class="sd">          backward </span>
+<span class="sd">          params saver</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+          <span class="c1"># set device for this batch</span>
+          <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'batch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_batch_start</span>
+
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">'cuda'</span><span class="p">:</span> <span class="c1"># GPU + FP16</span>
+              <span class="k">with</span> <span class="n">autocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fp16</span><span class="p">):</span>
+                  <span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="c1"># train_for_one_batch</span>
+              <span class="c1"># bawkward + gradient_cliping</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">backward_step</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+              <span class="c1">#  schedule_lr</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'batch'</span><span class="p">:</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+          <span class="k">else</span><span class="p">:</span> <span class="c1"># like the above but on CPU</span>
+              <span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">backward_step</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'batch'</span><span class="p">:</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+          <span class="c1"># save stats</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_batch_end</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+              <span class="k">break</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>
+<code>backward_step</code> is normally the same except for things like GANs</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">backward_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">'cuda'</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>       
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>we have the same function for validation</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">valid_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">"""</span>
+<span class="sd">      train model for one epoch on valid_ds, it has:</span>
+<span class="sd">          callbacks state changer</span>
+<span class="sd">          device change for batch</span>
+<span class="sd">          autocast for mixed percision</span>
+<span class="sd">          params saver</span>
+<span class="sd">      """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+              <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'batch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_batch_start</span>
+
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">'cuda'</span><span class="p">:</span> <span class="c1"># GPU + FP16</span>
+                  <span class="k">with</span> <span class="n">autocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fp16</span><span class="p">):</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="c1"># train_for_one_step</span>
+              <span class="k">else</span><span class="p">:</span> <span class="c1"># CPU</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              
+              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_batch_end</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+                <span class="k">break</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>now we need normal <code>train_step</code> &amp; <code>valid_step</code><ul>
+<li>these function gave a batch of data and do one train step on it</li>
+<li>Keras &amp; Lightning have the same</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="sd">""" train on one batch and compute metrics</span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch: training batch (From Dataloder)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            loss: any loss that you compute</span>
+<span class="sd">            metrics: come from compute_metrics function</span>
+<span class="sd">        """</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">metrcis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span>
+
+    <span class="k">def</span> <span class="nf">valid_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="sd">""" train on one batch of valid and compute metrics</span>
+<span class="sd">        Args:</span>
+<span class="sd">            batch: training batch (From Dataloder)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            loss: any loss that you compute</span>
+<span class="sd">            metrics: come from compute_metrics function</span>
+<span class="sd">        """</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">metrcis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>the main advantage is you can Override <code>train_step</code> &amp; <code>valid_step</code></p>
+<ul>
+<li>and create your own <code>Trainer</code>
+</li>
+<li>just like <code>Keras SubClassing</code> and <code>pl.LightningModule</code><ul>
+<li>see the following example</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">AutoEncoderTrainer</span><span class="p">(</span><span class="n">Trainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">batch</span> <span class="c1"># we don't need y for AEs</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="c1"># compute reconstraction loss</span>
+        <span class="n">metrcis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>the second utils function is </li>
+<li>
+<code>compute_metrics</code>:<ul>
+<li>for computing all metrics that you pass to Trainer</li>
+<li>it saves those in a dict with name</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+      <span class="sd">""" Compute metrics that you passed in __init__</span>
+<span class="sd">      Args:</span>
+<span class="sd">          pred: prediction of the model</span>
+<span class="sd">          y: gronth truth</span>
+<span class="sd">      Returns:</span>
+<span class="sd">        res: a dict{metrics_name: result}</span>
+<span class="sd">      """</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span><span class="p">:</span>
+        <span class="c1"># use name of that functin for Logging</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+      <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>now we have a really simple training that can work with these:<ul>
+<li>metrics </li>
+<li>callbacks</li>
+<li>cpu, cuda</li>
+<li>fp16, fp32</li>
+<li>gradient cillping</li>
+<li>...</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="CallBacks">
+<a class="anchor" href="#CallBacks" aria-hidden="true"><span class="octicon octicon-link"></span></a>CallBacks<a class="anchor-link" href="#CallBacks"> </a>
+</h2>
+<ul>
+<li>the second important thing in frameworks is Callbacks</li>
+<li>with the concept of callback, we can add anything that we want without<ul>
+<li>changing the training process</li>
+<li>or any knowledge from Trainer</li>
+</ul>
+</li>
+<li>I think the callbacks are really great<ul>
+<li>you can test new ideas (for example Adaptive Gradient Clipping)</li>
+<li>just with creating a Custom Callback and adding it to fit</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>we need a Basic callback class<ul>
+<li>we can override from this</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Callback</span><span class="p">():</span>
+    <span class="sd">""" Base class for creating callbacks:</span>
+<span class="sd">          with self in this class and its child</span>
+<span class="sd">          you can access to all property from Trainer</span>
+<span class="sd">    """</span>
+    <span class="k">def</span> <span class="nf">set_trainer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">):</span>
+        <span class="c1"># get trainer object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span> <span class="o">=</span> <span class="n">trainer</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+    <span class="c1"># fit</span>
+    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="c1"># train</span>
+    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_train_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="c1"># valid</span>
+    <span class="k">def</span> <span class="nf">on_valid_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_valid_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_valid_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_valid_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_valid_step_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">on_valid_step_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>we need a CallBack Handler<ul>
+<li>it gives a list of callbacks and runs all of them</li>
+<li>in each state like <code>on_train_start</code>
+</li>
+<li>and it has some <code>default_callbacks</code>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">CallbackRunner</span><span class="p">():</span>
+    <span class="c1"># callbacks runner (with default_callbacks)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callbacks</span><span class="p">,</span> <span class="n">trainer</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Args:</span>
+<span class="sd">          callbacks: list of callbacks (list)</span>
+<span class="sd">          trainer: trainer object (Trainer)</span>
+<span class="sd">        """</span>
+        <span class="c1"># set StatsAvg, Reporter callbacks to default_callbacks</span>
+        <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[</span><span class="n">StatsAvg</span><span class="p">(),</span> <span class="n">Reporter</span><span class="p">(</span><span class="n">after_step</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="n">default_callbacks</span> <span class="o">+</span> <span class="n">callbacks</span>
+        <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
+          <span class="c1"># set trainer object to all callbacks</span>
+          <span class="n">cb</span><span class="o">.</span><span class="n">set_trainer</span><span class="p">(</span><span class="n">trainer</span><span class="p">)</span>
+
+    <span class="c1"># run all state with one function</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span>
+          <span class="nb">getattr</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">attr</span><span class="p">)()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>StatsAvg is the most important callbacks that we need<ul>
+<li>it keeps track of metrics and loss and computes the average of them</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">StatsAvg</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+  <span class="c1"># inner class for computing AVG with mommentom  </span>
+  <span class="k">class</span> <span class="nc">AvgRunner</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span> <span class="n">val</span> <span class="o">*</span> <span class="n">step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+
+  <span class="c1"># helper functions</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mom</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">mom</span> <span class="o">=</span> <span class="n">mom</span>
+
+  <span class="k">def</span> <span class="nf">update_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">avg</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+          <span class="n">avg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">get_avgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+      <span class="k">return</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span><span class="n">a</span><span class="o">.</span><span class="n">avg</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span><span class="p">,</span> <span class="n">names</span><span class="p">)}</span>
+  
+
+  <span class="c1"># valid section</span>
+  <span class="k">def</span> <span class="nf">on_valid_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AvgRunner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span><span class="p">))]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AvgRunner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">on_valid_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span><span class="o">.</span><span class="n">avg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_avgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> 
+        
+  <span class="k">def</span> <span class="nf">on_valid_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span>
+
+  <span class="c1"># train section</span>
+  <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">AvgRunner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span><span class="p">))]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">AvgRunner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span><span class="o">.</span><span class="n">avg</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_avgs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>     
+
+  <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrcis_runners</span>
+    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_runner</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>after having the AvgStats we need a Reporter<ul>
+<li>for printing stats like loss and metrics during training</li>
+</ul>
+</li>
+<li>in creating callbacks order is really important</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Reporter</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">after_step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">after_step</span> <span class="o">=</span> <span class="n">after_step</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="s1">'train'</span><span class="p">):</span>
+        <span class="n">report</span> <span class="o">=</span> <span class="s1">'   loss: '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">report</span> <span class="o">+=</span> <span class="s1">'  '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s1">'   '</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\r</span><span class="s2"> </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s2">_steps: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">_steps'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span> <span class="o">+</span> <span class="n">report</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">on_valid_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span> 
+
+    <span class="k">def</span> <span class="nf">on_valid_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span><span class="o">%</span><span class="k">self</span>.after_step==0:
+            <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">'valid'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span><span class="o">%</span><span class="k">self</span>.after_step==0:
+            <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">'train'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1"> Epoch </span><span class="si">%2d</span><span class="s1">/</span><span class="si">%2d</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epoch'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epochs'</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'-'</span> <span class="o">*</span> <span class="mi">75</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'  time: </span><span class="si">%.0f</span><span class="s1">m </span><span class="si">%.0f</span><span class="s1">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">t1</span><span class="o">//</span><span class="mi">60</span><span class="p">,</span> <span class="n">t1</span><span class="o">%</span><span class="k">60</span>))
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>so far we saw default callbacks but<ul>
+<li>we can create any callbacks that we want</li>
+</ul>
+</li>
+<li>look at the following<ul>
+<li>a new callback for learning rate finding</li>
+<li>it's a child of <code>Callback</code> Class</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">LRFinder</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">max_lr</span><span class="o">=</span><span class="mf">5e-1</span><span class="p">,</span> <span class="n">mom</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">update_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_lr</span> <span class="o">=</span> <span class="n">min_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_lr</span> <span class="o">=</span> <span class="n">max_lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mom</span> <span class="o">=</span> <span class="n">mom</span> <span class="c1"># Make loss smoother using momentum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_steps</span> <span class="o">=</span> <span class="n">update_steps</span> <span class="c1"># update lr after X batch</span>
+                
+    <span class="k">def</span> <span class="nf">on_train_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'train_steps'</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epochs'</span><span class="p">]</span>    
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_lr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_lr</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">n_iter</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">update_steps</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">on_train_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># in callbacks we have access to all params from Trainer</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="o">+</span><span class="n">loss</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mom</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">loss</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">%</span><span class="k">self</span>.update_steps==0:
+            <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>            
+            <span class="c1"># update lr</span>
+            <span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rates</span><span class="p">[</span><span class="n">step</span><span class="o">//</span><span class="bp">self</span><span class="o">.</span><span class="n">update_steps</span><span class="p">]</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+
+        <span class="c1"># Stop criteria</span>
+        <span class="k">if</span> <span class="n">loss</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_loss</span><span class="o">*</span><span class="mf">1.1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trainer</span><span class="o">.</span><span class="n">stop_training</span> <span class="o">=</span> <span class="kc">True</span>         
+            
+    <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rates</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">)],</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'I think we find it: </span><span class="si">{</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Learning Rate"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Loss"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="s1">'log'</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Test:-MNIST-Classification">
+<a class="anchor" href="#Test:-MNIST-Classification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test: MNIST Classification<a class="anchor-link" href="#Test:-MNIST-Classification"> </a>
+</h3>
+<ul>
+<li>now it's ready to use</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">((</span><span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">255</span><span class="p">))])</span>
+<span class="n">train_ds</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">'./data'</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+<span class="n">test_ds</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="s1">'./data'</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>you can write any custom function for metrics</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">acc</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">pred</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>we create model, loss, optimizer &amp; scheduler</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">compile_model</span><span class="p">():</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">StepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=.</span><span class="mi">9</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>now the create a Trainer object</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="n">compile_model</span><span class="p">()</span>
+<span class="n">learner</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="o">=</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span><span class="o">=</span><span class="p">[</span><span class="n">acc</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>we need to create <code>lr_finder</code>
+</li>
+<li>and train it just for one epoch<ul>
+<li>you can see the acc right!!! </li>
+<li>and lr_finder works correctly</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr_finder</span> <span class="o">=</span> <span class="n">LRFinder</span><span class="p">(</span><span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">max_lr</span><span class="o">=</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">learner</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">lr_finder</span><span class="p">],</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ Epoch  1/ 1
+---------------------------------------------------------------------------
+ train_steps: 389/469   loss: 2.255  acc: 54.095  time: 0m 10s
+
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learner</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ Epoch  1/ 2
+---------------------------------------------------------------------------
+ train_steps: 469/469   loss: 0.9052  acc: 0.741  time: 0m 13s
+
+ Epoch  2/ 2
+---------------------------------------------------------------------------
+ train_steps: 469/469   loss: 0.3651  acc: 0.897  time: 0m 12s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>every thigs is right and now we can create any Trainer<ul>
+<li>imagine I want to add a new feature to my Trainer</li>
+<li>the feature is something like <code>model.summary</code> in Keras</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">torchsummary</span> <span class="kn">import</span> <span class="n">summary</span>
+
+<span class="k">class</span> <span class="nc">CustomTrainer</span><span class="p">(</span><span class="n">Trainer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">input_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span> <span class="o">=</span> <span class="n">compile_model</span><span class="p">()</span>
+
+<span class="n">learner</span> <span class="o">=</span> <span class="n">CustomTrainer</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="o">=</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">valid_ds</span><span class="o">=</span><span class="n">test_ds</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span><span class="o">=</span><span class="p">[</span><span class="n">acc</span><span class="p">])</span>
+<span class="n">learner</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span> <span class="c1"># new feature</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+           Flatten-1                  [-1, 784]               0
+            Linear-2                  [-1, 128]         100,480
+              GELU-3                  [-1, 128]               0
+            Linear-4                   [-1, 10]           1,290
+================================================================
+Total params: 101,770
+Trainable params: 101,770
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.01
+Params size (MB): 0.39
+Estimated Total Size (MB): 0.40
+----------------------------------------------------------------
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learner</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+ Epoch  1/ 3
+---------------------------------------------------------------------------
+ train_steps: 469/469   loss: 0.9163  acc: 0.742  time: 0m 12s
+ valid_steps: 157/157   loss: 0.4111  acc: 0.887
+
+ Epoch  2/ 3
+---------------------------------------------------------------------------
+ train_steps: 469/469   loss: 0.3669  acc: 0.897  time: 0m 12s
+ valid_steps: 157/157   loss: 0.3186  acc: 0.911
+
+ Epoch  3/ 3
+---------------------------------------------------------------------------
+ train_steps: 469/469   loss: 0.3193  acc: 0.909  time: 0m 12s
+ valid_steps: 157/157   loss: 0.2934  acc: 0.915
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>for practice you can add these functions to your Trainer</li>
+</ul>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span>    <span class="k">def</span> <span class="nf">most_worse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">unfreaze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span>
+    <span class="k">def</span> <span class="nf">repuodicible</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">pass</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="All-in-one:-Trainer-Class">
+<a class="anchor" href="#All-in-one:-Trainer-Class" aria-hidden="true"><span class="octicon octicon-link"></span></a>All in one: Trainer Class<a class="anchor-link" href="#All-in-one:-Trainer-Class"> </a>
+</h2>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Trainer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">train_ds</span><span class="p">,</span> <span class="n">valid_ds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">train_bs</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">valid_bs</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_type</span><span class="o">=</span><span class="s1">'epoch'</span><span class="p">,</span> <span class="n">metrcis</span><span class="o">=</span><span class="p">[],</span> <span class="n">workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fp16</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grad_clip_value</span><span class="o">=</span><span class="s1">'inf'</span><span class="p">):</span>
+        
+        <span class="c1"># without valid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">=</span> <span class="n">scheduler_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span> <span class="o">=</span> <span class="n">metrcis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span> <span class="o">=</span> <span class="n">grad_clip_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fp16</span> <span class="o">=</span> <span class="n">fp16</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">GradScaler</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="n">fp16</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">workers</span> <span class="o">=</span> <span class="n">workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># check</span>
+        <span class="c1"># prepare dls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span> <span class="o">=</span> <span class="n">train_bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span> <span class="o">=</span> <span class="n">valid_bs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span> <span class="o">=</span> <span class="n">train_ds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_ds</span> <span class="o">=</span> <span class="n">valid_ds</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_train_dataloder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'train_steps'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span><span class="p">)}</span>
+        <span class="k">if</span> <span class="n">valid_ds</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_valid_dataloder</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'valid_steps'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="p">)</span>
+    
+
+        
+    <span class="c1"># training </span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epochs'</span><span class="p">]</span> <span class="o">=</span> <span class="n">epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">change_device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">CallbackRunner</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">trainer</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_start</span>
+        <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">epochs</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'epoch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">epoch</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_epoch_start</span>
+            <span class="c1"># train</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_epoch_start</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_epoch</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_epoch_end</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'epoch'</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="c1"># valid</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="o">!=</span><span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_epoch_start</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">valid_epoch</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_epoch_end</span>    
+              
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_epoch_end</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+                <span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_end</span>
+        
+
+        
+    <span class="k">def</span> <span class="nf">train_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_dl</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+          <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'batch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_batch_start</span>
+             
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">'cuda'</span><span class="p">:</span> <span class="c1"># GPU + FP16</span>
+              <span class="k">with</span> <span class="n">autocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fp16</span><span class="p">):</span>
+                  <span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              
+              <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+              <span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">)</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'batch'</span><span class="p">:</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+          <span class="k">else</span><span class="p">:</span> <span class="c1"># CPU</span>
+              <span class="n">loss</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+              <span class="n">clip_grad_norm_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_value</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_type</span> <span class="o">==</span> <span class="s1">'batch'</span><span class="p">:</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+          <span class="c1"># stats</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="n">metrics</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_train_batch_end</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+              <span class="k">break</span>
+
+    
+    <span class="k">def</span> <span class="nf">valid_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+              <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'batch'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_batch_start</span>
+
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">==</span> <span class="s1">'cuda'</span><span class="p">:</span> <span class="c1"># GPU + FP16</span>
+                  <span class="k">with</span> <span class="n">autocast</span><span class="p">(</span><span class="n">enabled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fp16</span><span class="p">):</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'loss'</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">'metrics'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_step</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+              
+              <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">on_valid_batch_end</span>
+              <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span><span class="p">:</span> 
+                <span class="k">break</span>
+        
+        
+
+    <span class="c1"># -------------------------------------------------------------------------------- overrider</span>
+    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">metrcis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span>
+
+    <span class="k">def</span> <span class="nf">valid_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">metrcis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_metrics</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span><span class="p">,</span> <span class="n">metrcis</span>
+
+    <span class="k">def</span> <span class="nf">get_train_dataloder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_bs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">)</span>      
+      
+    <span class="k">def</span> <span class="nf">get_valid_dataloder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_bs</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">workers</span><span class="p">)</span>
+
+
+    <span class="c1"># -------------------------------------------------------------------------------- utils</span>
+    <span class="k">def</span> <span class="nf">change_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+
+
+    <span class="k">def</span> <span class="nf">compute_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrcis</span><span class="p">:</span>
+            <span class="n">res</span><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+    
+    
+    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="n">input_size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_ds</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cpu'</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">lr_finder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">'cuda'</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_lr</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">max_lr</span><span class="o">=</span><span class="mf">1e1</span><span class="p">):</span>
+        <span class="n">init_weights</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">())</span>
+        <span class="c1"># off valid epoch</span>
+        <span class="n">valid_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="n">epochs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">LRFinder</span><span class="p">(</span><span class="n">min_lr</span><span class="o">=</span><span class="n">min_lr</span><span class="p">,</span> <span class="n">max_lr</span><span class="o">=</span><span class="n">max_lr</span><span class="p">)])</span>
+        <span class="c1"># reset training</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">init_weights</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_dl</span> <span class="o">=</span> <span class="n">valid_dl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop_training</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+    <span class="k">def</span> <span class="nf">set_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
+<li>I hope you learned somthing and enjoed</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="sajjjadayobi/blog"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/blog/implementation/2021/04/20/narm.html" hidden></a>
+</article>
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/blog/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/blog/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+        <ul class="contact-list">
+          <li class="p-name">Sajjad Ayoubi</li>
+          <li><a class="u-email" href="mailto:sadeveloper360@gmail.com">sadeveloper360@gmail.com</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p></p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/sajjjadayobi" title="sajjjadayobi"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/ayoubi_sajjad" title="ayoubi_sajjad"><svg class="svg-icon grey"><use xlink:href="/blog/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
