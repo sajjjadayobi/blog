@@ -1,0 +1,29 @@
+<h1 id="i-was-confused-about-adamw-and-adam--warm-up">I was confused about AdamW and Adam + Warm Up</h1>
+
+<p>This is what I have found out</p>
+
+<h2 id="warm-up-is-a-learning-rate-scheduler">Warm Up is a learning Rate Scheduler</h2>
+
+<p>Warm up steps are just a few updates with low learning rate at the beginning of training. After this <strong>warm up</strong>, you use the regular learning rate (schedule) to train your model to convergence.</p>
+
+<p>The idea that this helps your network to slowly adapt to the data intuitively makes sense. However, theoretically, the main reason for warm up steps is to allow adaptive optimizers (e.g. Adam, RMSProp, …) to compute correct statistics of the gradients. Therefore, a warm up period makes little sense when training with plain SGD.</p>
+
+<p>If your data set is highly differentiated, you can suffer from a sort of “early over-fitting”. If your shuffled data happens to include a cluster of related, strongly-featured observations, your model’s initial training can skew badly toward those features – or worse, toward incidental features that aren’t truly related to the topic at all.</p>
+
+<p>Warm-up is a way to reduce the primacy effect of the early training examples. Without it, you may need to run a few extra epochs to get the convergence desired, as the model un-trains those early superstitions.</p>
+
+<p>Many models afford this as a command-line option. The learning rate is increased linearly over the warm-up period. If the target learning rate is <code class="language-plaintext highlighter-rouge">p</code> and the warm-up period is <code class="language-plaintext highlighter-rouge">n</code>, then the first batch iteration uses <code class="language-plaintext highlighter-rouge">1*p/n</code> for its learning rate; the second uses <code class="language-plaintext highlighter-rouge">2*p/n</code>, and so on: iteration <code class="language-plaintext highlighter-rouge">i</code> uses <code class="language-plaintext highlighter-rouge">i*p/n</code>, until we hit the nominal rate at iteration <code class="language-plaintext highlighter-rouge">n</code>. this means that the first iteration gets only 1/n of the primacy effect. This does a reasonable job of balancing that influence. for example Bert use liner Warm Up with linear decay /\</p>
+
+<h2 id="adamw-is-adam-with-correct-weight-decay">AdamW is Adam with correct Weight Decay</h2>
+
+<p>In general, Adam needs more regularization than SGD, L2 and weight decay are the same in just Vanilla SGD, not in algorithms that use momentum. Weight decay is just in backward pass and added to the gradients but L2 add directly in loss function
+AdamW paper shows that weight decay work better in the case of Adam, but the implementation of Adam with weight decay was wrong during these years. in this paper, they fixed it.</p>
+
+<ul>
+  <li><strong>W</strong> stands for weight decay</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">optim</span><span class="p">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">net</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>When weight decay is 0, there is no difference between Adam and AdamW.</p>
