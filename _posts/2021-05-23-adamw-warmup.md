@@ -4,7 +4,7 @@ layout: post
 description: This is what I have found out
 categories: [markdown]
 branch: master
-image: images/persian_qa.png
+image: images/adamw.png
 comments: true
 title: I was confused about AdamW and Adam + Warm Up 
 ---
