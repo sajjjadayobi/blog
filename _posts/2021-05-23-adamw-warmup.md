@@ -1,3 +1,14 @@
+---
+toc: true
+layout: post
+description: This is what I have found out
+categories: [markdown]
+branch: master
+image: images/persian_qa.png
+comments: true
+title: I was confused about AdamW and Adam + Warm Up 
+---
+
 # I was confused about AdamW and Adam + Warm Up 
 
 This is what I have found out
@@ -17,7 +28,7 @@ Many models afford this as a command-line option. The learning rate is increased
 ## AdamW is Adam with correct Weight Decay
 
 In general, Adam needs more regularization than SGD, L2 and weight decay are the same in just Vanilla SGD, not in algorithms that use momentum. Weight decay is just in backward pass and added to the gradients but L2 add directly in loss function
-AdamW paper shows that weight decay work better in the case of Adam, but the implementation of Adam with weight decay was wrong during these years. in this paper, they fixed it.  
+[AdamW](https://arxiv.org/abs/1711.05101) paper shows that weight decay work better in the case of Adam, but the implementation of Adam with weight decay was wrong during these years. in this paper, they fixed it.  
 
 - **W** stands for weight decay
 
